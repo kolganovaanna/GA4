@@ -78,20 +78,81 @@ git commit -m "Part A done"
 
 **PART B**
 
+6. Add Sbatch options to the top of the TrimGalore shell script to specify:
 
+- The account/project you want to use
+- The number of cores you want to reserve: use 8
+- The amount of time you want to reserve: use 30 minutes
+- The desired file name of Slurm log
+- That Slurm should email you upon job failure
+- Optional: you can try other options you’d like to test
 
+For optional, I chose to do --error
 
-
+```bash
 #SBATCH --account=PAS2880
 #SBATCH --cpus-per-task=8
 #SBATCH --time=00:30:00
 #SBATCH --output=slurm-fastqc-%j.out
 #SBATCH --mail-type=FAIL
+#SBATCH --error=slurm-fastqc-%j.err
+```
 
-Trying this additional option:
-SBATCH --error=slurm-fastqc-%j.err
+I put all of that into the trimgalore.sh file 
 
+
+7. Find the option that tells TrimGalore how many cores it can use and add the relevant line(s) from the TrimGalore help info to your README.md. In the script, change the trim_galore command accordingly to use the available number of cores.
+
+The option I found is --cores:
+
+```bash
+apptainer exec oras://community.wave.seqera.io/library/trim-galore:0.6.10--bc38c9238980c80e \
+  trim_galore --help
+```
+
+The relevant output was:
+
+```bash
 -j/--cores INT          Number of cores to be used for trimming [default: 1].
+```
+
+I changed the trim_galore command in the script. My logic was that the number of cores first needs to be given as a variable. Then, this becomes part of the report: 
+
+```bash
+echo "# Cores to use: $SLURM_CPUS_PER_TASK"
+
+apptainer exec "$TRIMGALORE_CONTAINER" \
+    trim_galore \
+    --paired \
+    --fastqc \
+    --cores "$SLURM_CPUS_PER_TASK" \
+    --output_dir "$outdir" \
+    "$R1" \
+    "$R2"
+```
+8. To test the script and batch job submission, submit the script as a batch job only for sample ERR10802863.
+
+I used the following commands:
+
+```bash
+R1=../garrigos-data/fastq/ERR10802863_R1.fastq.gz
+R2=../garrigos-data/fastq/ERR10802863_R2.fastq.gz
+
+For check: ls -lh "$R1" "$R2"
+
+sbatch scripts/trimgalore.sh "$R1" "$R2" results/trimgalore
+```
+The outputs were:
+
+```bash
+-rw-rw----+ 1 kolganovaanna PAS2880 21M Sep  9 13:45 ../garrigos-data/fastq/ERR10802863_R1.fastq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 22M Sep  9 13:45 ../garrigos-data/fastq/ERR10802863_R2.fastq.gz
+
+Submitted batch job 37820912
+```
+squeue -u $USER -l
+
+
 
 apptainer exec oras://community.wave.seqera.io/library/trim-galore:0.6.10--bc38c9238980c80e \
   trim_galore data/ERR10802863.fastq.gz
