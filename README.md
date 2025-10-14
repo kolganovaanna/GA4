@@ -50,14 +50,13 @@ mkdir scripts results
 cp -rv ../garrigos-data/fastq data
 
 git init
+git add README.md
+git commit -m "Committing to README to set up"
 echo "results/" > .gitignore
 echo "data/" >> .gitignore
 echo "scripts/" >> .gitignore
 git add .gitignore
 git commit -m "Adding a Gitignore file"
-
-git add README.md
-git commit -m "Committing to README to set up"
 ```
 
 5. As a starting script, store the code below in a shell script scripts/trimgalore.sh. This is a script to run TrimGalore, which should be very similar to your final script from last week’s exercises.
