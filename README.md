@@ -71,7 +71,7 @@ touch trimgalore.sh
 I then copied the provided code into the trimgalore.sh file I jsut created. Then, I committed to the trimgalore.sh 
 
 ```bash
-git add scripts/* README.md
+git add -f scripts/* README.md
 git commit -m "Part A done"
 ```
 
