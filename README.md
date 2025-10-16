@@ -31,7 +31,7 @@ The output was:
 /fs/ess/PAS2880/users/kolganovaanna/GA4
 ```
 
-*Note*: below, my steps will go in the order of my coding because to me it made more sense to first create README, scripts, results, and copy data before making a .gitignore. So, I basically will combined those steps and show my commands. 
+*Note*: below, my steps will go in the order of my coding because to me it made more sense to first create README, scripts, results, and copy data before making a .gitignore. So, I basically will combine those steps and show my commands. 
 
 2. Initialize a Git repository. Commit to the repo throughout the assignment as you see fit, but at least once for each “Part” of this assignment. Use and commit a .gitignore file as appropriate.
 3. Inside dir GA4, create a README.md file and open it in the VS Code editor. Use this file throughout the assigment to add your answers.
@@ -71,10 +71,10 @@ touch trimgalore.sh
 I then copied the provided code into the trimgalore.sh file I jsut created. Then, I committed to the trimgalore.sh 
 
 ```bash
-git add -f scripts/* README.md
+git add scripts/* README.md
 git commit -m "Part A done"
 ```
-
+*Note* I had to use -f as the terminal told me because I don't want this tringalore.sh file to be ignored
 
 **PART B**
 
@@ -140,7 +140,7 @@ R2=../garrigos-data/fastq/ERR10802863_R2.fastq.gz
 
 For check: ls -lh "$R1" "$R2"
 
-sbatch scripts/trimgalore.sh "$R1" "$R2" results/trimgalore
+sbatch scripts/trimgalore.sh "$R1" "$R2" results/fastqc
 ```
 The outputs were:
 
@@ -148,12 +148,95 @@ The outputs were:
 -rw-rw----+ 1 kolganovaanna PAS2880 21M Sep  9 13:45 ../garrigos-data/fastq/ERR10802863_R1.fastq.gz
 -rw-rw----+ 1 kolganovaanna PAS2880 22M Sep  9 13:45 ../garrigos-data/fastq/ERR10802863_R2.fastq.gz
 
-Submitted batch job 37820912
+Submitted batch job 37821007
 ```
+
+9. Monitor the job, and when it’s done, check that everything went well (if it didn’t, redo until you get it right). In your README.md, explain your monitoring and checking process. Then, remove all outputs (Slurm log files and TrimGalore output files) produced by this test-run.
+
+I used the following command:
+
+```bash
 squeue -u $USER -l
+```
 
+The output was:
 
+```Tue Oct 14 12:31:39 2025
+             JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
+          37821007       cpu trimgalo kolganov  RUNNING       0:07     30:00      1 p0215
+          37820928       cpu ondemand kolganov  RUNNING      32:55   4:00:00      1 p0223
+```
 
+Once it was done running, the files appeared on the left side bar. Then, I proceeded to check 1) if the files are there using ls; 2) if the job has been successfully finished using tail ; 3) if the main FastQC output files are present using ls -lh
+
+I used the following commands:
+
+```bash
+ls
+
+ tail slurm-fastqc*.out
+ tail slurm-fastqc*.err
+
+ ls -lh results/fastqc
+ ```
+
+ The outputs were:
+
+ ```bash
+ data  README.md  results  scripts  slurm-fastqc-37821007.err  slurm-fastqc-37821007.out
+
+# TrimGalore version:
+
+                        Quality-/Adapter-/RRBS-/Speciality-Trimming
+                                [powered by Cutadapt]
+                                  version 0.6.10
+
+                               Last update: 02 02 2023
+
+# Successfully finished script trimgalore.sh
+Tue Oct 14 12:31:55 PM EDT 2025
+
+Approx 80% complete for ERR10802863_R2_val_2.fq.gz
+Approx 85% complete for ERR10802863_R2_val_2.fq.gz
+Approx 90% complete for ERR10802863_R2_val_2.fq.gz
+Approx 95% complete for ERR10802863_R2_val_2.fq.gz
+Deleting both intermediate output files ERR10802863_R1_trimmed.fq.gz and ERR10802863_R2_trimmed.fq.gz
+
+====================================================================================================
+
+INFO:    Using cached SIF image
+INFO:    gocryptfs not found, will not be able to use gocryptfs
+
+total 43M
+-rw-rw----+ 1 kolganovaanna PAS2880 2.4K Oct 14 12:31 ERR10802863_R1.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 675K Oct 14 12:31 ERR10802863_R1_val_1_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 348K Oct 14 12:31 ERR10802863_R1_val_1_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 14 12:31 ERR10802863_R1_val_1.fq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.3K Oct 14 12:31 ERR10802863_R2.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 676K Oct 14 12:31 ERR10802863_R2_val_2_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 341K Oct 14 12:31 ERR10802863_R2_val_2_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  21M Oct 14 12:31 ERR10802863_R2_val_2.fq.gz
+```
+All of the outputs have indicated to me that the scipt was succesfully ran. For final check, I will use this command again but modified (just to try it with my username):
+
+```bash
+squeue -u kolganovaanna -l
+```
+
+*Note*: the cleanup wasn't done until question 10 was answered (because I needed to look at the file to make my conclusions). Additionally, my job was completed so fast that I only saw it in the "Running" status. 
+
+To clean up, I used the following command:
+
+```bash
+rm -r results/fastqc slurm-fastqc*
+```
+
+I saw how the files on the left side bar disappeared. 
+
+10. Illumina sequencing uses colors to distinguish between nucleotides as they are being added during the sequencing-by-synthesis process. However, newer Illumina machines (Nextseq, Novaseq) use a different color chemistry than older ones, and this newer chemistry suffers from an artefact which can produce strings of Gs with high quality scores that really should be Ns, especially at the end of reverse (R2) reads. In the FastQC outputs for the R2 file that you just produced with TrimGalore (recall that it runs FastQC after trimmming!), do you see any evidence for this problem? Explain.
+
+less slurm-fastqc-37821007.out
+/R2
 apptainer exec oras://community.wave.seqera.io/library/trim-galore:0.6.10--bc38c9238980c80e \
   trim_galore data/ERR10802863.fastq.gz
 sbatch scripts/trimgalore.sh
