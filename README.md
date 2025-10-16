@@ -54,7 +54,6 @@ git add README.md
 git commit -m "Committing to README to set up"
 echo "results/" > .gitignore
 echo "data/" >> .gitignore
-echo "scripts/" >> .gitignore
 git add .gitignore
 git commit -m "Adding a Gitignore file"
 ```
@@ -68,13 +67,12 @@ cd scripts/
 touch trimgalore.sh
 ```
 
-I then copied the provided code into the trimgalore.sh file I jsut created. Then, I committed to the trimgalore.sh 
+I then copied the provided code into the trimgalore.sh file I just created. Then, I committed to the trimgalore.sh 
 
 ```bash
-git add scripts/* README.md
+git add scripts/trimgalore.sh README.md
 git commit -m "Part A done"
 ```
-*Note* I had to use -f as the terminal told me because I don't want this tringalore.sh file to be ignored
 
 **PART B**
 
