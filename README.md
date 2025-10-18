@@ -114,7 +114,7 @@ The relevant output was:
 -j/--cores INT          Number of cores to be used for trimming [default: 1].
 ```
 
-I changed the trim_galore command in the script. My logic was that the number of cores first needs to be given as a variable. Then, this becomes part of the report: 
+I changed the trim_galore command in the script. My logic was that the number of cores first needs to be given as a variable. Then, this becomes part of the report. Since I assigned 8 to my "cpus-per-task", I am just going to use this as an assigned value for --cores. Here. I am allowed to use more than 1 because I am submitting a batch job: 
 
 ```bash
 echo "# Cores to use: $SLURM_CPUS_PER_TASK"
@@ -146,7 +146,7 @@ The outputs were:
 -rw-rw----+ 1 kolganovaanna PAS2880 21M Sep  9 13:45 ../garrigos-data/fastq/ERR10802863_R1.fastq.gz
 -rw-rw----+ 1 kolganovaanna PAS2880 22M Sep  9 13:45 ../garrigos-data/fastq/ERR10802863_R2.fastq.gz
 
-Submitted batch job 37821007
+Submitted batch job 37845773
 ```
 
 9. Monitor the job, and when it’s done, check that everything went well (if it didn’t, redo until you get it right). In your README.md, explain your monitoring and checking process. Then, remove all outputs (Slurm log files and TrimGalore output files) produced by this test-run.
@@ -159,13 +159,16 @@ squeue -u $USER -l
 
 The output was:
 
-```Tue Oct 14 12:31:39 2025
-             JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
-          37821007       cpu trimgalo kolganov  RUNNING       0:07     30:00      1 p0215
-          37820928       cpu ondemand kolganov  RUNNING      32:55   4:00:00      1 p0223
+```bash
+Sat Oct 18 16:11:59 2025
+JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
+37845773       cpu trimgalo kolganov  RUNNING       0:09     30:00      1 p0023
+37845767       cpu ondemand kolganov  RUNNING       2:11   2:00:00      1 p0224
 ```
 
-Once it was done running, the files appeared on the left side bar. Then, I proceeded to check 1) if the files are there using ls; 2) if the job has been successfully finished using tail ; 3) if the main FastQC output files are present using ls -lh
+*Note*: This looks messy, but I saw both my VS code session and my slurm batch job id in the "Running" status 
+
+Once it was done running, the files appeared on the left side bar. Then, I proceeded to check 1) if the files are there using "ls"; 2) if the job has been successfully finished using "tail" ; 3) if the main FastQC output files are present using "ls -lh"; 4) checked again with "squeue -u $USER -l" if the job is still there (it wasn't, which means it was done); 5) checked my email for FAIL (wasn't there)
 
 I used the following commands:
 
@@ -181,19 +184,18 @@ ls
  The outputs were:
 
  ```bash
- data  README.md  results  scripts  slurm-fastqc-37821007.err  slurm-fastqc-37821007.out
+ data  README.md  results  scripts  slurm-fastqc-37845773.err  slurm-fastqc-37845773.out
 
 # TrimGalore version:
 
-                        Quality-/Adapter-/RRBS-/Speciality-Trimming
-                                [powered by Cutadapt]
-                                  version 0.6.10
+  Quality-/Adapter-/RRBS-/Speciality-Trimming
+  [powered by Cutadapt]
+  version 0.6.10
 
-                               Last update: 02 02 2023
+  Last update: 02 02 2023
 
 # Successfully finished script trimgalore.sh
-Tue Oct 14 12:31:55 PM EDT 2025
-
+Sat Oct 18 04:12:14 PM EDT 2025
 Approx 80% complete for ERR10802863_R2_val_2.fq.gz
 Approx 85% complete for ERR10802863_R2_val_2.fq.gz
 Approx 90% complete for ERR10802863_R2_val_2.fq.gz
@@ -206,53 +208,272 @@ INFO:    Using cached SIF image
 INFO:    gocryptfs not found, will not be able to use gocryptfs
 
 total 43M
--rw-rw----+ 1 kolganovaanna PAS2880 2.4K Oct 14 12:31 ERR10802863_R1.fastq.gz_trimming_report.txt
--rw-rw----+ 1 kolganovaanna PAS2880 675K Oct 14 12:31 ERR10802863_R1_val_1_fastqc.html
--rw-rw----+ 1 kolganovaanna PAS2880 348K Oct 14 12:31 ERR10802863_R1_val_1_fastqc.zip
--rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 14 12:31 ERR10802863_R1_val_1.fq.gz
--rw-rw----+ 1 kolganovaanna PAS2880 2.3K Oct 14 12:31 ERR10802863_R2.fastq.gz_trimming_report.txt
--rw-rw----+ 1 kolganovaanna PAS2880 676K Oct 14 12:31 ERR10802863_R2_val_2_fastqc.html
--rw-rw----+ 1 kolganovaanna PAS2880 341K Oct 14 12:31 ERR10802863_R2_val_2_fastqc.zip
--rw-rw----+ 1 kolganovaanna PAS2880  21M Oct 14 12:31 ERR10802863_R2_val_2.fq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.4K Oct 18 16:11 ERR10802863_R1.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 675K Oct 18 16:12 ERR10802863_R1_val_1_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 348K Oct 18 16:12 ERR10802863_R1_val_1_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 18 16:12 ERR10802863_R1_val_1.fq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.3K Oct 18 16:12 ERR10802863_R2.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 676K Oct 18 16:12 ERR10802863_R2_val_2_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 341K Oct 18 16:12 ERR10802863_R2_val_2_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  21M Oct 18 16:12 ERR10802863_R2_val_2.fq.gz
 ```
-All of the outputs have indicated to me that the scipt was succesfully ran. For final check, I will use this command again but modified (just to try it with my username):
+
+All of the outputs have indicated to me that the scipt was succesfully run. I didn't get any FAIL emails. For final check, I uses this command again but modified (just to try it with my actual username):
 
 ```bash
 squeue -u kolganovaanna -l
 ```
 
-*Note*: the cleanup wasn't done until question 10 was answered (because I needed to look at the file to make my conclusions). Additionally, my job was completed so fast that I only saw it in the "Running" status. 
+The output contained my VS code session at this time (37845767, I had multiple because was doing the assignment for multiple days and didn't think about just relaunching my previous VS code session)
+
+*Note*: the cleanup wasn't done until question 10 was answered (because I needed to look at the file to make my conclusions). A 
 
 To clean up, I used the following command:
 
 ```bash
 rm -r results/fastqc slurm-fastqc*
 ```
-
-I saw how the files on the left side bar disappeared. 
+I saw how the files on the left side bar disappeared
 
 10. Illumina sequencing uses colors to distinguish between nucleotides as they are being added during the sequencing-by-synthesis process. However, newer Illumina machines (Nextseq, Novaseq) use a different color chemistry than older ones, and this newer chemistry suffers from an artefact which can produce strings of Gs with high quality scores that really should be Ns, especially at the end of reverse (R2) reads. In the FastQC outputs for the R2 file that you just produced with TrimGalore (recall that it runs FastQC after trimmming!), do you see any evidence for this problem? Explain.
 
-less slurm-fastqc-37821007.out
-/R2
-apptainer exec oras://community.wave.seqera.io/library/trim-galore:0.6.10--bc38c9238980c80e \
-  trim_galore data/ERR10802863.fastq.gz
-sbatch scripts/trimgalore.sh
+I used the following command:
 
-example_file=data/ERR10802863_R1.fastq.gz
-sbatch scripts/trimgalore.sh "$example_file" results/fastqc
+```bash
+ls -lh results/fastqc*
+```
 
-squeue -u $USER -l
-git init
-echo "results/" > .gitignore
-echo "data/" >> .gitignore
-echo "scripts/" >> .gitignore
-git add .gitignore
-git commit -m "Add a Gitignore file"
+The output for the command was:
 
-sbatch --account=PAS2880 scripts/trimgalore.sh
+```bash
+total 43M
+-rw-rw----+ 1 kolganovaanna PAS2880 2.4K Oct 18 16:11 ERR10802863_R1.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 675K Oct 18 16:12 ERR10802863_R1_val_1_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 348K Oct 18 16:12 ERR10802863_R1_val_1_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 18 16:12 ERR10802863_R1_val_1.fq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.3K Oct 18 16:12 ERR10802863_R2.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 676K Oct 18 16:12 ERR10802863_R2_val_2_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 341K Oct 18 16:12 ERR10802863_R2_val_2_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  21M Oct 18 16:12 ERR10802863_R2_val_2.fq.gz
+```
+To see if there's evidence of the described problem, I first looked at the html file for R2. I clicked on the file with "control" and donwloaded it. The per base N content plot shows 0% for all reads. Per sequence quality scores tend to increase towards the end. The per base sequence quality doesn't seem to ahve anythign wrong with it as far as I can tell because everything is in the green zone. In the per base sequence content plot, it looks like %G is pretty stable. 
+Next, I used the following command to look at the fq.gz file
+
+```bash
+zcat results/fastqc/ERR10802863_R2_val_2.fq.gz | less
+```
+
+The last lines in the output were:
+
+```bash
+AAAAAEEEEEEEEEEEEEAEEEEEAEEEEEEEEEEEEEEEEEEE6EEEEEEEEEEEEEAEEEEEEEEEEAAEE
+@ERR10802863.30245032 30245032 length=74
+AACTCGGTCATAAAGTCCAGCTTCTCGGCGGGGCTGTCATCCTGGAGGCAGGCCTGGTACGCCTCGTGCGTCTT
++
+AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAAEEEEEEEEEEEEE
+@ERR10802863.30427015 30427015 length=72
+ACGTCGTGTTTAAGAAAACAGAAATAAATCATTTAAGTGTATATCATTAGCACAGTCAATGAATCAATAC
++
+AAAAAEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEA
+@ERR10802863.24760709 24760709 length=74
+TGTCCCTTCGCGTACTTTTTTGTTGGAGTGTTGCTCGGTAGAATGTCGCGTACAAACGGTACAATTAATTACCG
++
+AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEAEEEE
+@ERR10802863.1023046 1023046 length=74
+ACCTTCTGGGCAGCAGCTCCTCCGTAACCGCCGGCAGCGTGGCCACCACCGTAGCCGGCCGCAGCAGGGGCGGC
+```
+I think that if there was actually a poly-G problem, the end of the sequence would only contain a bunch of Gs. However, here this is not the case because we can still see E, C, A mixed with Gs. So, I think for R2 data they used older machines and there's no evidence of poly-G. 
+
+11. We’ll assume that the data was indeed produced with the newer Illumina color chemistry. In the TrimGalore help info, find the relevant TrimGalore option to deal with the poly-G probelm, and again add the relevant line(s) from the help info to your README.md. Then, use the TrimGalore option you found, but don’t change the quality score threshold from the default.
+
+I used the following command:
 
 ```bash
 apptainer exec oras://community.wave.seqera.io/library/trim-galore:0.6.10--bc38c9238980c80e \
   trim_galore --help
 ```
+I found this option: --quality<INT> (there's a space between quality and INT but if I do the space then README makes it invisible in the preview file).  Trim low-quality ends from reads in addition to adapter removal. For
+RRBS samples, quality trimming will be performed first, and adapter trimming is carried in a second round. Other files are quality and adapter trimmed in a single pass. The algorithm is the same as the one used by BWA INT from all qualities; compute partial sums from all indices
+to the end of the sequence; cut sequence at the index at which the sum is
+minimal). Default Phred score: 20.
+
+And I also found this option: 
+--nextseq INT This enables the option '--nextseq-trim=3'CUTOFF' within Cutadapt, which will set a quality cutoff (that is normally given with -q instead), but qualities of G bases are ignored.
+This trimming is in common for the NextSeq- and NovaSeq-platforms, where basecalls without
+any signal are called as high-quality G bases. This is mutually exlusive with '-q INT'.
+
+Interestingly, it also has a --polyA option. But not --polyG. 
+
+I think that the best way is to use --nextseq and we're gonna use 20 by default because this command is mutually exclusive with '-q INT'. I added it into the tringalore.sh code and now the main part of the code looks like this: 
+
+```bash
+# Run TrimGalore
+apptainer exec "$TRIMGALORE_CONTAINER" \
+    trim_galore \
+    --paired \
+    --fastqc \
+    --nextseq 20 \
+    --cores "$SLURM_CPUS_PER_TASK" \
+    --output_dir "$outdir" \
+    "$R1" \
+    "$R2"
+```
+12. Rerun TrimGalore with the added color-chemistry option. Check all outputs and confirm that usage of this option made a difference. Then, remove all outputs produced by this test-run again.
+
+I used these commands:
+
+```bash
+sbatch scripts/trimgalore.sh "$R1" "$R2" results/fastqc
+
+For monitoring: squeue -u kolganovaanna -l
+
+ls -lh results/fastqc*
+
+zcat results/fastqc/ERR10802863_R2_val_2.fq.gz | less
+```
+
+The outputs were:
+
+```bash
+Submitted batch job 37845795
+
+JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
+37845795       cpu trimgalo kolganov  RUNNING       0:10     30:00      1 p0023
+37845767       cpu ondemand kolganov  RUNNING      44:27   2:00:00      1 p0224
+
+total 42M
+-rw-rw----+ 1 kolganovaanna PAS2880 2.5K Oct 18 16:54 ERR10802863_R1.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 679K Oct 18 16:54 ERR10802863_R1_val_1_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 356K Oct 18 16:54 ERR10802863_R1_val_1_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 18 16:54 ERR10802863_R1_val_1.fq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.3K Oct 18 16:54 ERR10802863_R2.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 681K Oct 18 16:54 ERR10802863_R2_val_2_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 345K Oct 18 16:54 ERR10802863_R2_val_2_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 18 16:54 ERR10802863_R2_val_2.fq.gz
+```
+I again downloaded the html. file. I was able to see a difference in the per base sequence content plot. The %G actually went down at the end of the reads. I think this is a good evidence that the adjustment worked. 
+
+The last lines of my output for the last command used were:
+
+```bash
+AAAAAEEEEEEEEEEEEEAEEEEEAEEEEEEEEEEEEEEEEEEE6EEEEEEEEEEEEEAEEEEEEEEEEAAEE
+@ERR10802863.30245032 30245032 length=74
+AACTCGGTCATAAAGTCCAGCTTCTCGGCGGGGCTGTCATCCTGGAGGCAGGCCTGGTACGCCTCGTGCGTCTT
++
+AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAAEEEEEEEEEEEEE
+@ERR10802863.30427015 30427015 length=72
+ACGTCGTGTTTAAGAAAACAGAAATAAATCATTTAAGTGTATATCATTAGCACAGTCAATGAATCAATAC
++
+AAAAAEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEA
+@ERR10802863.24760709 24760709 length=74
+TGTCCCTTCGCGTACTTTTTTGTTGGAGTGTTGCTCGGTAGAATGTCGCGTACAAACGGTACAATTAATTACC
++
+AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEAEEE
+@ERR10802863.1023046 1023046 length=74
+ACCTTCTGGGCAGCAGCTCCTCCGTAACCGCCGGCAGCGTGGCCACCACCGTAGCCGGCCGCAGCAGGGGCGGC
+```
+
+It seems like in the 24760709 line the G is gone from the end of the sequence. It was there in my previous output. This is the only difference I can see here. Might me that --nextseq gets rid of Gs only at the end?
+
+I then cleaned up using this command: 
+
+```bash
+rm -r results/fastqc slurm-fastqc*
+```
+
+
+**Bonus**
+
+1. The TrimGalore output FASTQ files are oddly named, ending in _R1_val_1.fq.gz and _R2_val_2.fq.gz – check the output files from your initial run to see this. This is not necessarily a problem, but could trip you up in a next step with these files.Therefore, modify your TrimGalore script to rename the output files after running TrimGalore, giving them the same names as the input files. Then, rerun the script to check that your changes were successful.
+
+Below is the modifies script:
+
+```bash
+# Definining the output file names and creating final output files names. Using "mv -v" to finish renaming
+sample_id=$(basename "$R1" _R1.fastq.gz)
+R1_out_init="$outdir/${sample_id}_R1_val_1.fq.gz"
+R2_out_init="$outdir/${sample_id}_R2_val_2.fq.gz"
+
+R1_out="$outdir/$(basename "$R1")"
+R2_out="$outdir/$(basename "$R2")"
+
+mv -v "$R1_out_init" "$R1_out"
+mv -v "$R2_out_init" "$R2_out"
+```
+
+I will check using these commands:
+
+```bash
+sbatch scripts/trimgalore.sh "$R1" "$R2" results/fastqc
+
+squeue -u kolganovaanna -l
+
+ls -lh results/fastqc*
+```
+
+The outputs were:
+
+```bash
+Submitted batch job 37845851
+
+Sat Oct 18 17:34:24 2025
+JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
+37845851       cpu trimgalo kolganov  RUNNING       0:16     30:00      1 p0112
+37845767       cpu ondemand kolganov  RUNNING    1:24:36   2:00:00      1 p0224
+
+total 42M
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 18 17:34 ERR10802863_R1.fastq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.5K Oct 18 17:34 ERR10802863_R1.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 679K Oct 18 17:34 ERR10802863_R1_val_1_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 356K Oct 18 17:34 ERR10802863_R1_val_1_fastqc.zip
+-rw-rw----+ 1 kolganovaanna PAS2880  20M Oct 18 17:34 ERR10802863_R2.fastq.gz
+-rw-rw----+ 1 kolganovaanna PAS2880 2.3K Oct 18 17:34 ERR10802863_R2.fastq.gz_trimming_report.txt
+-rw-rw----+ 1 kolganovaanna PAS2880 681K Oct 18 17:34 ERR10802863_R2_val_2_fastqc.html
+-rw-rw----+ 1 kolganovaanna PAS2880 345K Oct 18 17:34 ERR10802863_R2_val_2_fastqc.zip
+```
+
+*Note*: I don't think I accomplished it but it was a good practice for me to at least try. 
+
+I then cleaned up using this command:
+
+```bash
+rm -r results/fastqc slurm-fastqc*
+```
+
+And I also deleted this adjusted script from trimgalore.sh
+
+I then used the following commands to update github and commit to files:
+
+```bash
+git add scripts/trimgalore.sh README.md
+git commit -m "Part B"
+```
+
+
+
+**Part C**
+
+13. Write a for loop in your README.md to submit a TrimGalore batch job for each pair of FASTQ files that you have in your data dir.
+
+14. Monitor the batch jobs and when they are done, check that everything went well (if it didn’t, redo until you get it right). In your README.md, explain your monitoring and checking process. In this case, it is appropriate to keep the Slurm log files: move them into a dir logs within the TrimGalore output dir.
+
+
+**Part D**
+
+15. Create a repository on GitHub, connect it to your local repo, and push your local repo to GitHub.
+
+
+
+16. Create a new issue and tag GitHub users menukabh and jelmerp, asking us to take a look at your assignment.
+
+
+
+
+
+
+
+
+
+
+
+
