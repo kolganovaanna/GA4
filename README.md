@@ -166,7 +166,7 @@ JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(
 37845767       cpu ondemand kolganov  RUNNING       2:11   2:00:00      1 p0224
 ```
 
-*Note*: This looks messy, but I saw both my VS code session and my slurm batch job id in the "Running" status 
+I saw both my VS code session and my slurm batch job id in the "Running" status. 
 
 Once it was done running, the files appeared on the left side bar. Then, I proceeded to check 1) if the files are there using "ls"; 2) if the job has been successfully finished using "tail" ; 3) if the main FastQC output files are present using "ls -lh"; 4) checked again with "squeue -u $USER -l" if the job is still there (it wasn't, which means it was done); 5) checked my email for FAIL (wasn't there)
 
@@ -553,7 +553,6 @@ git commit -m "Part C"
 15. Create a repository on GitHub, connect it to your local repo, and push your local repo to GitHub.
 
 ```bash
-
 git add README.md
 git commit -m "final commit"
 git branch -M main
