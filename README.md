@@ -114,7 +114,7 @@ The relevant output was:
 -j/--cores INT          Number of cores to be used for trimming [default: 1].
 ```
 
-I changed the trim_galore command in the script. My logic was that the number of cores first needs to be given as a variable. Then, this becomes part of the report. Since I assigned 8 to my "cpus-per-task", I am just going to use this as an assigned value for --cores. Here. I am allowed to use more than 1 because I am submitting a batch job: 
+I changed the trim_galore command in the script. My logic was that the number of cores first needs to be given as a variable. Then, this becomes part of the report. Since I assigned 8 to my "cpus-per-task", I am just going to use this as an assigned value for --cores. Here I am allowed to use more than 1 because I am submitting a batch job: 
 
 ```bash
 echo "# Cores to use: $SLURM_CPUS_PER_TASK"
@@ -224,9 +224,9 @@ All of the outputs have indicated to me that the scipt was succesfully run. I di
 squeue -u kolganovaanna -l
 ```
 
-The output contained my VS code session at this time (37845767, I had multiple because was doing the assignment for multiple days and didn't think about just relaunching my previous VS code session)
+The output contained only my VS code session at this time (37845767, I had multiple because was doing the assignment for multiple days). This means my slurm batch job was completed. 
 
-*Note*: the cleanup wasn't done until question 10 was answered (because I needed to look at the file to make my conclusions). A 
+*Note*: the cleanup wasn't done until question 10 was answered (because I needed to look at the files to make my conclusions). 
 
 To clean up, I used the following command:
 
@@ -256,7 +256,8 @@ total 43M
 -rw-rw----+ 1 kolganovaanna PAS2880 341K Oct 18 16:12 ERR10802863_R2_val_2_fastqc.zip
 -rw-rw----+ 1 kolganovaanna PAS2880  21M Oct 18 16:12 ERR10802863_R2_val_2.fq.gz
 ```
-To see if there's evidence of the described problem, I first looked at the html file for R2. I clicked on the file with "control" and donwloaded it. The per base N content plot shows 0% for all reads. Per sequence quality scores tend to increase towards the end. The per base sequence quality doesn't seem to ahve anythign wrong with it as far as I can tell because everything is in the green zone. In the per base sequence content plot, it looks like %G is pretty stable. 
+
+To see if there's evidence of the described problem, I first looked at the html file for R2. I clicked on the file with "control" pressed and donwloaded it. The per base N content plot shows 0% for all reads. Per sequence quality scores tend to increase towards the end. The per base sequence quality doesn't seem to have anythign wrong with it as far as I can tell because everything is in the green zone. In the per base sequence content plot, it looks like %G is pretty stable. 
 Next, I used the following command to look at the fq.gz file
 
 ```bash
@@ -282,7 +283,7 @@ AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEAEEEE
 @ERR10802863.1023046 1023046 length=74
 ACCTTCTGGGCAGCAGCTCCTCCGTAACCGCCGGCAGCGTGGCCACCACCGTAGCCGGCCGCAGCAGGGGCGGC
 ```
-I think that if there was actually a poly-G problem, the end of the sequence would only contain a bunch of Gs. However, here this is not the case because we can still see E, C, A mixed with Gs. So, I think for R2 data they used older machines and there's no evidence of poly-G. 
+I think that if there was actually a poly-G problem, the end of the sequence would only contain a bunch of Gs. However, here this is not the case because we can still see E, C, A mixed with Gs. So, I think for R2 data they used older machines and there's no evidence of poly-G issue. 
 
 11. We’ll assume that the data was indeed produced with the newer Illumina color chemistry. In the TrimGalore help info, find the relevant TrimGalore option to deal with the poly-G probelm, and again add the relevant line(s) from the help info to your README.md. Then, use the TrimGalore option you found, but don’t change the quality score threshold from the default.
 
@@ -292,15 +293,11 @@ I used the following command:
 apptainer exec oras://community.wave.seqera.io/library/trim-galore:0.6.10--bc38c9238980c80e \
   trim_galore --help
 ```
-I found this option: --quality<INT> (there's a space between quality and INT but if I do the space then README makes it invisible in the preview file).  Trim low-quality ends from reads in addition to adapter removal. For
-RRBS samples, quality trimming will be performed first, and adapter trimming is carried in a second round. Other files are quality and adapter trimmed in a single pass. The algorithm is the same as the one used by BWA INT from all qualities; compute partial sums from all indices
-to the end of the sequence; cut sequence at the index at which the sum is
-minimal). Default Phred score: 20.
+I found this option: --quality INT.  Trim low-quality ends from reads in addition to adapter removal. For RRBS samples, quality trimming will be performed first, and adapter trimming is carried in a second round. Other files are quality and adapter trimmed in a single pass. The algorithm is the same as the one used by BWA INT from all qualities; compute partial sums from all indices to the end of the sequence; cut sequence at the index at which the sum is minimal). Default Phred score: 20.
 
 And I also found this option: 
 --nextseq INT This enables the option '--nextseq-trim=3'CUTOFF' within Cutadapt, which will set a quality cutoff (that is normally given with -q instead), but qualities of G bases are ignored.
-This trimming is in common for the NextSeq- and NovaSeq-platforms, where basecalls without
-any signal are called as high-quality G bases. This is mutually exlusive with '-q INT'.
+This trimming is in common for the NextSeq- and NovaSeq-platforms, where basecalls without any signal are called as high-quality G bases. This is mutually exlusive with '-q INT'.
 
 Interestingly, it also has a --polyA option. But not --polyG. 
 
@@ -440,7 +437,7 @@ I then cleaned up using this command:
 rm -r results/fastqc slurm-fastqc*
 ```
 
-And I also deleted this adjusted script from trimgalore.sh
+And I also deleted this adjusted script from trimgalore.sh.
 
 I then used the following commands to update github and commit to files:
 
@@ -450,12 +447,105 @@ git commit -m "Part B"
 ```
 
 
-
 **Part C**
 
 13. Write a for loop in your README.md to submit a TrimGalore batch job for each pair of FASTQ files that you have in your data dir.
 
+I used the following loop:
+
+```bash
+for R1 in data/*_R1.fastq.gz; do
+    R2="${R1/_R1.fastq.gz/_R2.fastq.gz}"
+    sbatch scripts/trimgalore.sh "$R1" "$R2" results/trim_galore
+done 
+```
+
+
 14. Monitor the batch jobs and when they are done, check that everything went well (if it didn’t, redo until you get it right). In your README.md, explain your monitoring and checking process. In this case, it is appropriate to keep the Slurm log files: move them into a dir logs within the TrimGalore output dir.
+
+I ran the following loop and used the command to monitor:
+
+```bash
+
+for R1 in data/*_R1.fastq.gz; do
+    R2="${R1/_R1.fastq.gz/_R2.fastq.gz}"
+    sbatch scripts/trimgalore.sh "$R1" "$R2" results/trim_galore
+done 
+
+squeue -u kolganovaanna -l
+```
+
+The outputs were"
+
+```bash
+Submitted batch job 37845856
+Submitted batch job 37845857
+Submitted batch job 37845858
+Submitted batch job 37845859
+Submitted batch job 37845860
+Submitted batch job 37845861
+Submitted batch job 37845862
+Submitted batch job 37845863
+Submitted batch job 37845864
+Submitted batch job 37845865
+Submitted batch job 37845866
+Submitted batch job 37845867
+Submitted batch job 37845868
+Submitted batch job 37845869
+Submitted batch job 37845870
+Submitted batch job 37845871
+Submitted batch job 37845872
+Submitted batch job 37845873
+Submitted batch job 37845874
+Submitted batch job 37845875
+Submitted batch job 37845876
+Submitted batch job 37845877
+
+
+Sat Oct 18 17:55:36 2025
+JOBID PARTITION     NAME     USER    STATE       TIME TIME_LIMI  NODES NODELIST(REASON)
+37845856       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0112
+37845857       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0008
+37845858       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0008
+37845859       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0032
+37845860       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0033
+37845861       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0068
+37845862       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0068
+37845863       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0102
+37845864       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0102
+37845865       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0036
+37845866       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0035
+37845867       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0035
+37845868       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0050
+37845869       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0049
+37845870       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0049
+37845871       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0143
+37845872       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0142
+37845873       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0142
+37845874       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0018
+37845875       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0018
+37845876       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0017
+37845877       cpu trimgalo kolganov  RUNNING       0:11     30:00      1 p0017
+37845767       cpu ondemand kolganov  RUNNING    1:45:48   2:00:00      1 p0224
+```
+
+At the end, the jobs disappered when I used the "squeue -u kolganovaanna -l" command again, indicating they were done running. I also didn't get any FAIL emails. 
+
+To move the outputs into logs dir, I used the following commands:
+
+```bash
+mkdir results/trim_galore/logs
+
+mv slurm-*.out results/trim_galore/logs/
+mv slurm-*.err results/trim_galore/logs/
+```
+
+At the end, I committed to README:
+
+```bash
+git add scripts/trimgalore.sh README.md
+git commit -m "Part C"
+```
 
 
 **Part D**
