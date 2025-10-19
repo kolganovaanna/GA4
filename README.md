@@ -218,7 +218,7 @@ total 43M
 -rw-rw----+ 1 kolganovaanna PAS2880  21M Oct 18 16:12 ERR10802863_R2_val_2.fq.gz
 ```
 
-All of the outputs have indicated to me that the scipt was succesfully run. I didn't get any FAIL emails. For final check, I uses this command again but modified (just to try it with my actual username):
+All of the outputs have indicated to me that the script was succesfully run. I didn't get any FAIL emails. For final check, I used the command showed below again but modified it (just to try it with my actual username):
 
 ```bash
 squeue -u kolganovaanna -l
