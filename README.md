@@ -552,6 +552,16 @@ git commit -m "Part C"
 
 15. Create a repository on GitHub, connect it to your local repo, and push your local repo to GitHub.
 
+```bash
+
+git add README.md
+git commit -m "final commit"
+git branch -M main
+git remote add origin git@github.com:kolganovaanna/GA4.git
+git push -u origin main
+
+
+
 
 
 16. Create a new issue and tag GitHub users menukabh and jelmerp, asking us to take a look at your assignment.
