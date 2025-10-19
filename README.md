@@ -10,7 +10,7 @@
 
 ## Assignment background
 
-This assignemnt targets practicing with slurm batch jobs
+This assignment targets practicing with slurm batch jobs
 
 ## Protocol
 
