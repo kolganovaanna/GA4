@@ -475,7 +475,7 @@ done
 squeue -u kolganovaanna -l
 ```
 
-The outputs were"
+The outputs were:
 
 ```bash
 Submitted batch job 37845856
