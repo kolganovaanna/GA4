@@ -370,7 +370,7 @@ AAAAAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEAEEE
 ACCTTCTGGGCAGCAGCTCCTCCGTAACCGCCGGCAGCGTGGCCACCACCGTAGCCGGCCGCAGCAGGGGCGGC
 ```
 
-It seems like in the 24760709 line the G is gone from the end of the sequence. It was there in my previous output. This is the only difference I can see here. Might me that --nextseq gets rid of Gs only at the end?
+It seems like in the 24760709 line the G is gone from the end of the sequence. It was there in my previous output. This is the only difference I can see here. Might be that --nextseq gets rid of Gs only at the end?
 
 I then cleaned up using this command: 
 
