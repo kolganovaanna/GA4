@@ -175,16 +175,16 @@ I used the following commands:
 ```bash
 ls
 
- tail slurm-fastqc*.out
- tail slurm-fastqc*.err
+tail slurm-fastqc*.out
+tail slurm-fastqc*.err
 
- ls -lh results/fastqc
+ls -lh results/fastqc
  ```
 
- The outputs were:
+The outputs were:
 
- ```bash
- data  README.md  results  scripts  slurm-fastqc-37845773.err  slurm-fastqc-37845773.out
+```bash
+data  README.md  results  scripts  slurm-fastqc-37845773.err  slurm-fastqc-37845773.out
 
 # TrimGalore version:
 
